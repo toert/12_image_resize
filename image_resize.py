@@ -11,7 +11,8 @@ def get_enter_data():
     output_path = ''
     while True:  #do {} while()
         print('Choose what you want to change:')
-        print('{}: {}'.format('1. Filepath to original image (necessary)', orig_path))
+        print('{}: {}'.format('1. Filepath to original image (necessary)',\
+            orig_path))
         print('{}: {}'.format('2. Width of result image', width))
         print('{}: {}'.format('3. Height of result image', height))
         print('{}: {}'.format('4. How much multiply size?', scale))
@@ -53,9 +54,12 @@ def get_final_filepath(path_to_original, path_to_result, width, height):
     full_name_initial = path_to_original.split('\\')[-1]
     extension = '.' + path_to_original.split('.')[-1]
     name_without_ext_initial = full_name_initial.replace(extension,'')
-    final_path = '{}\\{}__{}x{}{}'.format(path_to_result, name_without_ext_initial, width, height, extension)[1:]
-    print(name_without_ext_initial)
-    print(final_path)
+    if path_to_result:
+        path_to_final_dir = path_to_result + '\\'
+    else:
+        path_to_final_dir = path_to_result
+    final_path = '{}{}__{}x{}{}'.format(path_to_final_dir, \
+        name_without_ext_initial, width, height, extension)
     return final_path
 
 
@@ -85,6 +89,8 @@ if __name__ == '__main__':
         final_width = int(init_width * scale)
         final_height = int(init_height * scale)
 
-    filepath_to_resized = get_final_filepath(initial_filepath, dir_to_save_image, final_width, final_height)
-    resize_image(initial_filepath, filepath_to_resized, final_width, final_height)
+    filepath_to_resized = get_final_filepath(initial_filepath, \
+        dir_to_save_image, final_width, final_height)
+    resize_image(initial_filepath, filepath_to_resized, final_width, \
+        final_height)
     

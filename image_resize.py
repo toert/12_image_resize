@@ -74,10 +74,10 @@ def check_errors(initial_image, user_width, user_height, scale):
             return int(2)
 
 
-def handle_errors(error_code):
+def handle_errors(image, error_code):
     if error_code == 1:
         print('ERROR: Enter pixel-size or scale. Not at the same time!!')
-        initial_image.close()
+        image.close()
         exit(1)
     if error_code == 2:
         print('Warning, wrong ratio!')
@@ -98,7 +98,8 @@ if __name__ == '__main__':
 
     init_img = open_image(initial_filepath)
     init_width, init_height = get_size(init_img)
-    handle_errors(check_errors(init_img, user_width, user_height, scale))
+    handle_errors(init_img, check_errors(init_img, user_width,\
+                                         user_height, scale))
 
     final_width, final_height = get_final_height_and_width\
         (init_width, init_height, user_width, user_height, scale)

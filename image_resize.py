@@ -17,9 +17,13 @@ def open_image(filepath_to_image):
     return Image.open(filepath_to_image)
 
 
-def resize_image(initial_image, path_to_result, width, height):
+def save_image(image_to_save, path_to_save):
+    image_to_save.save(path_to_save)
+
+
+def resize_image(initial_image, width, height):
     img_resized = initial_image.resize((width, height), Image.ANTIALIAS)
-    img_resized.save(path_to_result)
+    return img_resized
 
 
 def get_final_filepath(path_to_original, path_to_final_dir, width, height):
@@ -56,17 +60,27 @@ def get_final_height_and_width(init_width, init_height, user_width,\
     return final_width, final_height
 
 
-def check_errors_and_then_exit_or_print_warning(initial_image, \
-                                  user_width, user_height, scale):
+def check_errors(initial_image, user_width, user_height, scale):
+    """
+    return 1 = don't enter pixel-size and scale at the same time
+    return 2 = wrong ratio. the image will be compressed on one of axe
+    """
     if (user_width is not None or user_height is not None) \
             and scale is not None:
-            print('ERROR: Enter pixel-size or scale. Not at the same time!!')
-            initial_image.close()
-            exit(1)
+            return int(1)
     if user_width is not None and user_height is not None:
         init_width, init_height = get_size(initial_image)
         if init_width / init_height != user_width / user_height:
-            print('Warning, wrong ratio!')
+            return int(2)
+
+
+def handle_errors(error_code):
+    if error_code == 1:
+        print('ERROR: Enter pixel-size or scale. Not at the same time!!')
+        initial_image.close()
+        exit(1)
+    if error_code == 2:
+        print('Warning, wrong ratio!')
 
 
 def get_size(initial_image):
@@ -84,14 +98,14 @@ if __name__ == '__main__':
 
     init_img = open_image(initial_filepath)
     init_width, init_height = get_size(init_img)
-    check_errors_and_then_exit_or_print_warning(init_img,\
-                                            user_width, user_height, scale)
+    handle_errors(check_errors(init_img, user_width, user_height, scale))
 
     final_width, final_height = get_final_height_and_width\
         (init_width, init_height, user_width, user_height, scale)
 
     filepath_to_resized = get_final_filepath(initial_filepath, \
                                  dir_to_save_image, final_width, final_height)
-    resize_image(init_img, filepath_to_resized, final_width, final_height)
+    save_image(resize_image(init_img, final_width, final_height), \
+               filepath_to_resized)
     init_img.close()
     print('Done!')
